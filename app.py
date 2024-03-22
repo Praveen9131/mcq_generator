@@ -9,7 +9,7 @@ from langchain.chains import SequentialChain
 from dotenv import load_dotenv
 app = Flask(__name__)
 load_dotenv()
-KEY = os.getenv("OPENAI_API_KEY")
+KEY =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
 def generate_quiz(number, subject, tone):
     llm = ChatOpenAI(openai_api_key=KEY, model_name="gpt-4", temperature=0.5)
     
