@@ -122,4 +122,8 @@ def generate():
     # Here, you should parse the response to create a structured JSON object for the quiz
     # For now, just return the raw response
     return a
+if __name__ == "__main__":
+    # For Heroku deployment, use the default port provided by Heroku
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
