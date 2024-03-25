@@ -58,7 +58,7 @@ def generate_quiz(number, subject, tone):
       ,please give me in this format RESPONSE_JSON format of arrayand use the keywords only question,options ,answershow me first question then options then answer
       dont generate question numbers 
       [{
-          "questio"
+          "question"
           "options""show the 4 options in the format od a,b,c,d"
           "answer" 
       }]use only this format dont use any other format
