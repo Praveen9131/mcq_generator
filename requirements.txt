@@ -1,5 +1,13 @@
 langchain
-openai
+python-dotenv
+langchain
+openai==0.28.0
 Flask
 gunicorn
-python-dotenv
+Pillow
+requests
+quart
+aiohttp
+uvicorn
+langchain-community
+
