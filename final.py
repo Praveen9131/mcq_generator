@@ -1,15 +1,14 @@
 from flask import Flask, request, jsonify
-import json
 import asyncio
 from m import generate_quiz
 from c import generate_quizc
 from fill import generate_quiz1
 from match import generate
-from images import generate_content_internal  # Import the function from images.py
+from images import generate_content_internal
 
 app = Flask(__name__)
 
-@app.route('/generate_quiz')
+@app.route('/generate_quiz', methods=['GET'])
 def generate_quiz_route():
     number = request.args.get('number', default=1, type=int)
     subject = request.args.get('subject', default='general knowledge', type=str)
@@ -25,11 +24,14 @@ def generate_quiz_route():
     elif quiz_type == 400:
         response = generate(number, subject, tone)  # Match the sequence
     elif quiz_type == 500:
-        response = asyncio.run(generate_content_internal(subject, number))  # Calls the function to handle content generation
+        # Using asyncio to call the Quart async function from Flask
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        response = loop.run_until_complete(generate_content_internal(subject, number))
     else:
         response = {"error": "Invalid quiz type"}
 
-    return json.dumps(response)
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
