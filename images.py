@@ -136,8 +136,12 @@ async def generate_mcq_with_image_options(description: str):
             "response_content": content
         }
 
-async def generate_content_internal(topic, num_questions):
+@app.route('/generate_content', methods=['GET'])
+async def generate_content():
     try:
+        topic = request.args.get('topic')
+        num_questions = int(request.args.get('num_questions'))
+
         logger.info(f"Generating content for topic: {topic} with {num_questions} questions")
 
         images_and_questions = []
@@ -151,12 +155,12 @@ async def generate_content_internal(topic, num_questions):
 
         for i, question_image_url in enumerate(question_image_urls):
             if not question_image_url:
-                return {"error": "Failed to generate question image"}
+                return jsonify({"error": "Failed to generate question image"}), 500
 
             description = f"This is an illustration representing the topic '{topic}'."
             mcq_with_images = await generate_mcq_with_image_options(description)
             if "error" in mcq_with_images:
-                return mcq_with_images
+                return jsonify(mcq_with_images), 500
 
             mcq_with_images["question_image_url"] = question_image_url
             images_and_questions.append(mcq_with_images)
@@ -188,16 +192,10 @@ async def generate_content_internal(topic, num_questions):
                 item["options"][option_key + "_resized"] = f"/image/option_image_{i+1}_{j+1}.png"
                 option_counter += 1
 
-        return images_and_questions
+        return jsonify(images_and_questions)
     except Exception as e:
         logger.error(f"Error generating content: {e}")
-        return {"error": "Internal server error"}
-
-@app.route('/generate_content', methods=['GET'])
-async def generate_content_route():
-    topic = request.args.get('topic')
-    num_questions = int(request.args.get('num_questions'))
-    return await generate_content_internal(topic, num_questions)
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/image/<filename>', methods=['GET'])
 async def get_image(filename):
@@ -211,5 +209,3 @@ async def get_image(filename):
     else:
         logger.error(f"Image not found: {filename}")
         return jsonify({"error": "Image not found"}), 404
-
-
